@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+#    author: Scott Rogers
+#    version: 2011.4.18
+#    stability: pre-alpha
+#    copying: 'Copyright (C) 2011 W. Scott Rogers
+#              This program is free software.
+#              You can redistribute it and/or modify it under the terms of the
+#              GNU General Public License as published by the Free Software Foundation;
+#              either version 2 of the License.
+
+import os
+import sys
+import optparse
+
+def main(xiinArg):
+
+    setFile = False
+
+    if checkPython:
+        xiinDesc = """ xiin is a directory parser meant to help debug inxi(www.inxi.org) bugs.
+            xiin will take a given directory, usually /sys or /proc and write the contents
+            to a specified file in key:value format where key is the directory/filename
+            and value is the contents of key."""
+
+        xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
+
+        xiinVersion = "%prog 2011.4.29-alpha"
+
+        defaultFile = os.environ['HOME'] + '/xiin.txt'
+
+        dirHelp     = 'directory containing files'
+        fileHelp    = 'if used write report to file, otherwise write output to the screen'
+        displayHelp = 'prints to terminal not to a file.  Cannot use with -f option'
+
+        parser = optparse.OptionParser(description = xiinDesc, usage = xiinUsage, version = xiinVersion)
+        parser.add_option('-d', '--directory', dest = 'directory', help = dirHelp)
+        parser.add_option('-f', '--file', dest = 'filename', help = fileHelp, default = defaultFile)
+        parser.add_option('-o', action = 'store_true', dest = 'display', help = displayHelp, default = False)
+
+        (options, args) = parser.parse_args()
+        if options is None:
+            parser.error('Nothing to do. Try option -h or --help.')
+            sys.exit(2)
+        if options.directory is not None:
+            getInfo(options.display, options.filename, options.directory)
+#end
+
+def getInfo(display, xiinFile, inDir='/sys'):
+    print("xiin getting info")
+
+    with open(xiinFile, 'w') as someOutput:
+        for root, dirs, files in os.walk(inDir):
+            for file in files:
+                fullPathFile = os.path.join(root, file)
+                try:
+                    if os.stat(fullPathFile).st_size:
+                        try:
+                            with open(fullPathFile, 'r') as someFile:
+                                try:
+                                    contents = someFile.readlines()
+                                    if display:
+                                        print('file: ' + os.path.join(root, file) + ':' + str(contents) )
+                                    else:
+                                        someOutput.writelines('file: ' + os.path.join(root, file) + ':' + str(contents) + '\n' )
+                                except:
+                                    pass
+                        except IOError:
+                            pass
+                except:
+                    pass
+#end
+
+def checkPython():
+    """ Not used at this time.  Will detect Python version.  Python 2.6+ required"""
+    return True
+#end
+
+if __name__ == '__main__':
+    main(sys.argv)
+#end
