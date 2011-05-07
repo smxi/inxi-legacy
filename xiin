@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #    author: Scott Rogers
-#    version: 2011.4.29
+#    version: 2011.05.06
 #    stability: pre-alpha
 #    copying: 'Copyright (C) 2011 W. Scott Rogers
 #              This program is free software.
@@ -24,7 +24,7 @@ def main(xiinArg):
 
     xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-    xiinVersion = "%prog 2011.4.29-alpha"
+    xiinVersion = "%prog 2011.05.06-alpha"
 
 #    defaultFile = os.environ['HOME'] + '/xiin.txt'
 #    defaultDir = '/sys'
