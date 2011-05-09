@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 #    author: Scott Rogers
-#    version: 2011.05.06
-#    stability: pre-alpha
+#    stability: alpha
 #    copying: 'Copyright (C) 2011 W. Scott Rogers
 #              This program is free software.
 #              You can redistribute it and/or modify it under the terms of the
@@ -26,7 +25,7 @@ def main(xiinArg):
 
     xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-    xiinVersion = "%prog 2011.05.06-alpha"
+    xiinVersion = "%prog 2011.05.08-alpha"
 
 #    defaultFile = os.environ['HOME'] + '/xiin.txt'
 #    defaultDir = '/sys'
@@ -42,68 +41,52 @@ def main(xiinArg):
     parser.add_option('-f', '--file', dest = 'filename', help = fileHelp)
     parser.add_option('-o', '--out', action = 'store_true', dest = 'display', help = displayHelp)
 
-    (options, args) = parser.parse_args()
-    if len(xiinArg) < 2:
-        parser.error('Nothing to do. Try option -h or --help.')
-        exit(2)
-    elif options.directory is None:
-        parser.error('xiin needs a directory')
-        exit(3)
-    elif options.filename is None and option.display is None:
-        parser.error('specify a file or display outpu')
-        exit(4)
-    elif options.directory == '/proc':
-        parser.error('xiin can not walk /proc')
-        exit(5)
-    else:
-        print('Starting xiin...')
-        print('')
-        print('Using options: ' + str(options))
-        print('')
-        getInfo(options.display, options.filename, options.directory)
-#end
+    (option, args) = parser.parse_args()
 
-def getInfo(display, xiinFile, inDir):
-    """ Walks the directory reading file contents """
-    print("Getting info")
-    print('')
+    xiinSwitch(option, xiinArg)
 
-    spinner = [ '  \\  ', '  |  ', '  /  ', '  -  ']
-
-    count = 1
-
-    with open(xiinFile, 'w') as someOutput:
-        for root, dirs, files in os.walk(inDir):
-            for file in files:
-                if int(count%25) > 4:
-                    count = 1
-                if (int(count%25) == 1) or (int(count%25) == 2) or (int(count%25) == 3) or (int(count%25) == 4):
-                    print(spinner[count%25 - 1]),
-                    sys.stdout.flush()
-                    sys.stdout.write('\r')
-                count = count + 1
-                fullPathFile = os.path.join(root, file)
-                try:
-                    if os.stat(fullPathFile).st_size:
-                        try:
-                            with open(fullPathFile, 'r') as someFile:
-                                try:
-                                    contents = someFile.readlines()
-                                    if display:
-                                        print('file: ' + os.path.join(root, file) + ':' + str(contents) )
-                                    else:
-                                        someOutput.writelines('file: ' + os.path.join(root, file) + ':' + str(contents) + '\n' )                                        
-                                except:
-                                    pass
-                        except IOError:
-                            pass
-                except:
-                    pass
     exit(0)
 #end
 
+def xiinSwitch(option, xiinArg):
+    """ Traffic director """
+# no arguements specified, so display helpful error
+    if len(xiinArg) < 2:
+        parser.error('Nothing to do. Try option -h or --help.')
+        exit(2)
+
+# no output specified
+    elif option.filename is None and option.display is None:
+        parser.error('specify a file or display outpu')
+        exit(3)
+
+# reading /proc will hang system for a while, it's a big deep virtual-directory
+    elif option.directory == '/proc':
+        parser.error('xiin can not walk /proc')
+        exit(4)
+
+# the directory needed when option used
+    elif option.directory is None:
+        parser.error('xiin needs a directory')
+        exit(5)
+
+# only display output
+    elif option.display is True and option.filename is None:
+        print('Starting xiin...')
+        print('')
+        displayXiinInfo(option.display, option.directory)
+
+# only write output
+    elif option.display is None and option.filename is not None:
+        print('Starting xiin...')
+        print('')
+        print('Using options: ' + str(option))
+        print('')
+        writeXiinInfo(option.display, option.filename, option.directory)
+#end
+
 def checkPython():
-    """ Detects Python compatibility.  Python 2.6+ required"""
+    """ Detects Python compatibility.  Python 2.6+ required """
     print('Detecting Python version...')
     print('')
     if sys.hexversion < 0x02060000:
@@ -111,6 +94,78 @@ def checkPython():
         exit(1)
     else:
         return
+#end
+
+def displayXiinInfo(display, directory):
+    """ Opens the write file and directs the walker, also displays output """
+    print("Getting info")
+    print('')
+
+    for root, dirs, files in os.walk(directory):
+	for file in files:
+	    xiinOpenFile(display, root, file, None)
+#end
+
+def writeXiinInfo(display, xiinFile, directory):
+    """ Opens the write file and directs the walker, also displays output """
+    print("Getting info")
+    print('')
+
+    with open(xiinFile, 'w') as outputFile:
+	xiinDirectoryWalker(directory, display, outputFile)
+#end
+
+def xiinDirectoryWalker(directory, display, outputFile):
+    """ Walks the directory """
+
+    count = 1
+    
+    for root, dirs, files in os.walk(directory):
+	for file in files:
+	    if int(count%25) > 4:
+		count = 1
+	    busySpinner(count)
+	    count = count + 1
+	    xiinOpenFile(display, root, file, outputFile)
+#end
+
+def xiinOpenFile(display, root, file, outputFile):
+    """ Opens a file and prep to read """
+
+    fullPathFile = os.path.join(root, file)
+    
+    try:
+	if os.stat(fullPathFile).st_size:
+	    try:
+		with open(fullPathFile, 'r') as someFile:
+		    xiinReadFileContents(display, root, file, someFile, outputFile)
+	    except IOError:
+		pass
+    except:
+	pass
+#end
+
+def xiinReadFileContents(display, root, fileName, someFile, outputFile):
+    """ Read file contents and either display them or write them to a file """
+    try:
+	contents = someFile.readlines()
+    except:
+	pass
+
+    if display:
+	print('file: ' + os.path.join(root, fileName) + ':' + str(contents))
+    else:
+	outputFile.writelines('file: ' + os.path.join(root, fileName) + ':' + str(contents) + '\n')
+#end
+
+def busySpinner(count):
+    """ Displays a busy spinner"""
+    spinner = [ ' -\\- ', ' -|- ', ' -/- ', ' --- ']
+
+    if (int(count%25) == 1) or (int(count%25) == 2) or (int(count%25) == 3) or (int(count%25) == 4):
+        print(spinner[count%25 - 1]),
+        sys.stdout.flush()
+        sys.stdout.write('\r')
 #end
 
 if __name__ == '__main__':
