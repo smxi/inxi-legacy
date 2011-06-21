@@ -253,7 +253,6 @@ class XiinLoader(object):
         workingDir = os.path.split(file)[0]
         workingFile = os.path.split(file)[1]
 
-        print('Dir: ' + workingDir)
         print('file: ' + workingFile)
 
         if extension in ('.tar.gz'):
