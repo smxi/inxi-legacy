@@ -1,4 +1,3 @@
-import os.path
 #!/usr/bin/env python
 
 #    author: Scott Rogers
@@ -13,6 +12,7 @@ import os.path
 
 import os
 import sys
+import time
 import ftplib
 import optparse
 
@@ -301,13 +301,15 @@ class XiinLoader(object):
         workingDir = os.path.split(file)[0]
         workingFile = os.path.split(file)[1]
 
+        savedFileName = self.savedFileName(workingFile, ftp)
+
         print('file: ' + workingFile)
 
         if extension in ('.tar.gz'):
             try:
                 os.chdir(workingDir)
                 print(ftp.pwd())
-                ftp.storbinary('STOR ' + workingFile, open(workingFile))
+                ftp.storbinary('STOR ' + savedFileName, open(workingFile))
                 os.chdir(origDir)
             except IOError:
                 print('ERROR: could not save file')
@@ -317,16 +319,26 @@ class XiinLoader(object):
             exit(1)
     #end
 
-    def checkForSameName(self, workingFile, ftp):
+    def savedFileName(self, workingFile, ftp):
         """ Check the server for a same file name """
 
-#        fileList = ftp.nlst()
-#        fileName = workingFile.
-#
-#        for file in fileList:
-#            if file == workingFile;
-#                workingFile = workingFile
+        fileList = ftp.nlst()
+
+        for file in fileList:
+            if file == workingFile:
+                workingFile = self.renameFile(workingFile)
+
+        return workingFile
     #end
+
+    def renameFile(self, file):
+        """ Renames a file so that it no longer conflicts """
+
+        file = file.split('.', 1)
+        extension = str(time.time()).split('.', 1)[0]
+        newName = file[0] + '-' + extension + '.' + file[1]
+
+        return newName
 #end
 
 if __name__ == '__main__':
