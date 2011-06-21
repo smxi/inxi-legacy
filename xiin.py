@@ -245,30 +245,6 @@ class XiinLoader(object):
         self = self
     #end
 
-    def upload(self, ftp, file):
-        """ Does the upload work """
-
-        extension = os.path.splitext(file)[1]
-        origDir = os.getcwd()
-        workingDir = os.path.split(file)[0]
-        workingFile = os.path.split(file)[1]
-
-        print('file: ' + workingFile)
-
-        if extension in ('.tar.gz'):
-            try:
-                os.chdir(workingDir)
-                print(ftp.pwd())
-                ftp.storlines('STOR ' + workingFile, open(workingFile))
-                os.chdir(origDir)
-            except IOError:
-                print('ERROR: could not save file')
-                exit(2)
-        else:
-            print('ERROR: Incorrect file')
-            exit(1)
-    #end
-
     def uploadXiinInfo(self, xiin):
         """ Uploads debugging information """
 
@@ -315,6 +291,41 @@ class XiinLoader(object):
         ftp.quit()
         print('xiin successfully uploaded the file')
         exit(0)
+    #end
+
+    def upload(self, ftp, file):
+        """ Does the upload work """
+
+        extension = os.path.splitext(file)[1]
+        origDir = os.getcwd()
+        workingDir = os.path.split(file)[0]
+        workingFile = os.path.split(file)[1]
+
+        print('file: ' + workingFile)
+
+        if extension in ('.tar.gz'):
+            try:
+                os.chdir(workingDir)
+                print(ftp.pwd())
+                ftp.storbinary('STOR ' + workingFile, open(workingFile))
+                os.chdir(origDir)
+            except IOError:
+                print('ERROR: could not save file')
+                exit(2)
+        else:
+            print('ERROR: Incorrect file')
+            exit(1)
+    #end
+
+    def checkForSameName(self, workingFile, ftp):
+        """ Check the server for a same file name """
+
+#        fileList = ftp.nlst()
+#        fileName = workingFile.
+#
+#        for file in fileList:
+#            if file == workingFile;
+#                workingFile = workingFile
     #end
 #end
 
