@@ -17,7 +17,7 @@ import ftplib
 import optparse
 
 def main(xiinArg):
-    print('main')
+    # http://docs.python.org/library/optparse.html
 
     checkPython()
 
@@ -87,7 +87,6 @@ def xiinUseChecker(xiin):
         xiin.ftpDestination = xiin.upload[1]
         xiin.ftpUname       = xiin.upload[2]
         xiin.ftpPwd         = xiin.upload[3]
-        pass
 #end
 
 def xiinSwitch(xiin):
@@ -120,7 +119,6 @@ def xiinSwitch(xiin):
         print('Uploading debugging information...')
         print('')
         xiinLoader.uploadXiinInfo(xiin)
-        pass
 
 #end
 
@@ -238,6 +236,10 @@ class XiinLoader(object):
     # exit(3): connection error
     # exit(4): login error
     # exit(5): error finding directory
+
+    # http://effbot.org/librarybook/ftplib.htm
+    # http://postneo.com/stories/2003/01/01/beyondTheBasicPythonFtplibExample.html
+    # http://docs.python.org/library/ftplib.html
 
     def __init__(self):
         self = self
