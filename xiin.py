@@ -206,7 +206,7 @@ def xiinReadFileContents(xiin):
 	pass
 
     if contents:
-	key = str(xiin.fullPathFile).replace('/', '.').replace('.', '', 1)
+	key = str(xiin.fullPathFile)#.replace('/', '.').replace('.', '', 1)
 
 	value = str(contents).replace('\\n','')
 
