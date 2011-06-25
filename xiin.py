@@ -44,7 +44,7 @@ class XIIN(object):
 
         xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-alpha-2"
+        xiinVersion = "%prog 2011.06.25-alpha-3"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -132,8 +132,6 @@ class XIIN(object):
     # only write output
         elif xiinArgDict.display is None and xiinArgDict.filename is not None:
             print('Starting xiin...')
-            print('')
-            print('Using options: ' + str(xiinArgDict))
             print('')
             self.writeXiinInfo(xiinArgDict)
 
