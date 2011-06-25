@@ -28,7 +28,7 @@ def main(xiinArg):
 
     xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-    xiinVersion = "%prog 2011.06.21-alpha"
+    xiinVersion = "%prog 2011.06.24-alpha"
 
 #    defaultFile = os.environ['HOME'] + '/xiin.txt'
 #    defaultDir = '/sys'
@@ -125,7 +125,7 @@ def xiinSwitch(xiin):
 # http://stackoverflow.com/questions/1093322/how-do-i-check-what-version-of-python-is-running-my-script
 def checkPython():
         """ Detects Python compatibility.  Python 2.6+ required """
-        print('checker')
+        
         pythonVersionText = 'Detecting Python version...[version 2.6+ required]...'
         pythonVersionErrorText = 'ERROR: Incorrect Python version: 2.6+ is required'
         pythonVersionPassText = 'Passed...continuing'
@@ -140,7 +140,7 @@ def checkPython():
             print(pythonVersionPassText)
             print('')
             return
-    #end
+#end
 
 def displayXiinInfo(xiin):
     """ Opens the write file and directs the walker, also displays output """
@@ -165,13 +165,13 @@ def writeXiinInfo(xiin):
 def xiinDirectoryWalker(xiin):
     """ Walks the directory """
 
+    spinner = Spinner()
+
     count = 1
     
     for root, dirs, files in os.walk(xiin.directory):
 	for file in files:
-	    if int(count%25) > 4:
-		count = 1
-	    busySpinner(count)
+	    spinner.render(count)
 	    count = count + 1
 	    xiin.fullPathFile = os.path.join(root, file)
 	    xiinOpenFile(xiin)
@@ -217,14 +217,57 @@ def xiinReadFileContents(xiin):
 		xiin.outputFile.writelines(key + ':' + value + ':' + '\n')
 #end
 
-def busySpinner(count):
-    """ Displays a busy spinner"""
-    spinner = [ ' -\\- ', ' -|- ', ' -/- ', ' --- ']
+class Spinner(object):
 
-    if (int(count%25) == 1) or (int(count%25) == 2) or (int(count%25) == 3) or (int(count%25) == 4):
-        print(spinner[count%25 - 1]),
-        sys.stdout.flush()
-        sys.stdout.write('\r')
+    def __init__(self, typeOfSpinner = [ ' [\\] ', ' [|] ', ' [/] ', ' [-] '], color = None):
+        """
+        typeOfSpinner:  A dictionary of characters to use as the spinner.
+        color:          The color of the spinner. Supports ASCII colors. [Default: stdio default ]
+        """
+        self = self
+        self.typeOfSpinner  = typeOfSpinner
+        self.color          = color
+        self.mod            = 0
+    #end
+
+    def render(self, count):
+        """ Displays a busy spinner."""
+
+        spinner = self.typeOfSpinner
+        counter = (((count - 1)/4)%4)
+
+        if (counter == self.mod):
+            self.mod = self.mod + 1
+            if self.mod > 3:
+                self.mod = 0
+            print(spinner[self.mod]),
+            sys.stdout.flush()
+            sys.stdout.write('\r')
+
+    #end
+
+    def setSpinnerImage(self, typeOfSpinner):
+        """
+        typeOfSpinner: A dictionary of characters to use as the spinner.
+        """
+        self.typeOfSpinner = typeOfSpinner
+    #end
+
+    def setSpinnerColor(self, color):
+        """
+        color: The color of the spinner. Supports ASCII colors. [Default: stdio default ]
+        """
+        self.color = color
+    #end
+
+    def getSpinnerImage(self):
+        return self.typeOfSpinner
+    #end
+
+    def getSpinnerColor(self):
+        return self.color
+    #end
+
 #end
 
 class XiinLoader(object):
