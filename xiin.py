@@ -28,7 +28,31 @@ class XIIN(object):
         self = self
     #end
 
-    def read(self, xiinArg):
+    def main(self, xiinArgs):
+        """
+        Start here and guide along
+        """
+        self.setOptions(xiinArgs)
+        # check Python version. 2.6 is the minimum, 3.0 is supported.
+
+        ## xiin will have the ability to update itself so that modules are
+        ## always up to date.
+        # CAUTION: be careful not to break external API (legacy support, if needed)
+        # check if modules (xiin libraries exist)
+        # if (exist): upgrade; else: install
+
+        # update config file (will overwrite old.  TODO: modify but don't overwrite old config file)
+            # xiin.conf.yml file
+
+        # Once up to date, if new python version module, check version again.
+
+        # run Options
+
+        pass
+    #end
+
+    # TODO: cheange this name to a more reflective meaningful name
+    def setOptions(self, xiinArgs):
         """
         Starts the read capabilities
         """
@@ -76,7 +100,7 @@ class XIIN(object):
 
         (options, args) = self.parser.parse_args()
 
-        options.args = xiinArg
+        options.args = xiinArgs
 
         self.xiinUseChecker(options)
         self.xiinSwitch(options)
@@ -525,5 +549,8 @@ class XiinUploader(object):
 
 if __name__ == '__main__':
     xiin = XIIN()
-    xiin.read(sys.argv)
+    xiin.main(sys.argv)
 #end
+
+# for inxi downloader
+# EOF
