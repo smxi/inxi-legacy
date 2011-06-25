@@ -42,9 +42,9 @@ class XIIN(object):
             to a specified file in key:value format where key is the directory/filename
             and value is the contents of key."""
 
-        xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
+#        xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-alpha-3"
+        xiinVersion = "%prog 2011.06.25-alpha-5"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -66,15 +66,15 @@ class XIIN(object):
                         [Usage: xiin -u <source> <target> <uname> <password> ] \
                         [Example: xiin -u /home/myhome/.inxi/some.txt somedomain.com anon anon ]'
 
-        parser = optparse.OptionParser(description = xiinDesc, usage = xiinUsage, version = xiinVersion)
+        self.parser = optparse.OptionParser(description = xiinDesc, version = xiinVersion)
 
-        parser.add_option('-d', '--directory', dest = 'directory', help = dirHelp)
-        parser.add_option('-f', '--file', dest = 'filename', help = fileHelp)
-        parser.add_option('-o', '--out', action = 'store_true', dest = 'display', help = displayHelp)
-        parser.add_option('-g', '--grep', dest = 'grep', help = grepHelp)
-        parser.add_option('-u', '--upload', nargs=2, dest = 'upload', help = uploadHelp)
+        self.parser.add_option('-d', '--directory', dest = 'directory', help = dirHelp)
+        self.parser.add_option('-f', '--file', dest = 'filename', help = fileHelp)
+        self.parser.add_option('-o', '--out', action = 'store_true', dest = 'display', help = displayHelp)
+        self.parser.add_option('-g', '--grep', dest = 'grep', help = grepHelp)
+        self.parser.add_option('-u', '--upload', nargs=2, dest = 'upload', help = uploadHelp)
 
-        (options, args) = parser.parse_args()
+        (options, args) = self.parser.parse_args()
 
         options.args = xiinArg
 
@@ -92,29 +92,28 @@ class XIIN(object):
         if xiinArgDict.upload is None:
         # no arguements specified, so display helpful error
             if len(xiinArgDict.args) < 2:
-                parser.error('Nothing to do. Try option -h or --help.')
+                self.parser.error('Nothing to do. Try option -h or --help.')
                 exit(2)
 
         # no output specified
             elif xiinArgDict.filename is None and xiinArgDict.display is None and xiinArgDict.grep is None:
-                parser.error('specify to display output or send to a file')
+                self.parser.error('specify to display output or send to a file')
                 exit(3)
 
         # reading /proc will hang system for a while, it's a big deep virtual-directory
             elif xiinArgDict.directory == '/proc':
-                parser.error('xiin can not walk /proc')
+                self.parser.error('xiin can not walk /proc')
                 exit(4)
 
         # the directory needed when option used
             elif xiinArgDict.directory is None:
-                parser.error('xiin needs a directory')
+                self.parser.error('xiin needs a directory')
                 exit(5)
         else:
             if len(xiinArgDict.upload ) < 2:
                 print('')
-                parser.error('ERROR: No xiin upload options given')
-                parser.error('[Usage: uploader <source> <target> <uname> <password> ]')
-                print('')
+                self.parser.error('ERROR: No xiin upload options given')
+                self.parser.error('[Usage: uploader <source> <target> <uname> <password> ]')
                 exit(6)
     #end
 
