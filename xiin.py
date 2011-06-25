@@ -34,8 +34,8 @@ class XIIN(object):
         """
         # http://docs.python.org/library/optparse.html
 
-        check = PythonVersionCheck()
-        check.check()
+        checkPython = PythonVersionCheck()
+        checkPython.check()
 
         xiinDesc = """ xiin is a directory parser meant to help debug inxi(www.inxi.org) bugs.
             xiin will take a given directory, usually /sys or /proc and write the contents
