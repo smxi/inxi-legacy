@@ -44,7 +44,7 @@ class XIIN(object):
 
         xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-alpha"
+        xiinVersion = "%prog 2011.06.25-alpha-1"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -78,8 +78,8 @@ class XIIN(object):
 
         options.args = xiinArg
 
-        xiinUseChecker(options)
-        xiinSwitch(options)
+        self.xiinUseChecker(options)
+        self.xiinSwitch(options)
 
         exit(0)
     #end
@@ -177,7 +177,7 @@ class XIIN(object):
 
     #end
 
-    def displayXiinInfo(xiinArgDict):
+    def displayXiinInfo(self, xiinArgDict):
         """
         Opens the write file and directs the walker, also displays output.
         """
@@ -188,10 +188,10 @@ class XIIN(object):
         for root, dirs, files in os.walk(xiinArgDict.directory):
             for file in files:
                 xiinArgDict.fullPathFile = os.path.join(root, file)
-                xiinOpenFile(xiinArgDict)
+                self.xiinOpenFile(xiinArgDict)
     #end
 
-    def writeXiinInfo(xiinArgDict):
+    def writeXiinInfo(self, xiinArgDict):
         """
         Opens the write file and directs the walker, also displays output.
         """
@@ -200,10 +200,10 @@ class XIIN(object):
         print('')
 
         with open(xiinArgDict.filename, 'w') as xiinArgDict.outputFile:
-            xiinDirectoryWalker(xiinArgDict)
+            self.xiinDirectoryWalker(xiinArgDict)
     #end
 
-    def xiinDirectoryWalker(xiinArgDict):
+    def xiinDirectoryWalker(self, xiinArgDict):
         """
         Walks the directory.
         """
@@ -217,10 +217,10 @@ class XIIN(object):
                 spinner.render(count)
                 count = count + 1
                 xiinArgDict.fullPathFile = os.path.join(root, file)
-                xiinOpenFile(xiinArgDict)
+                self.xiinOpenFile(xiinArgDict)
     #end
 
-    def xiinOpenFile(xiinArgDict):
+    def xiinOpenFile(self, xiinArgDict):
         """
         Opens a file and prep to read.
         """
@@ -230,19 +230,19 @@ class XIIN(object):
             try:
                 if os.stat(xiinArgDict.fullPathFile).st_size:
                     with open(xiinArgDict.fullPathFile, 'r') as xiinArgDict.someFile:
-                        xiinReadFileContents(xiinArgDict)
+                        self.xiinReadFileContents(xiinArgDict)
             except:
                 pass
         else:
             # other files seem alright
             try:
                 with open(xiinArgDict.fullPathFile, 'r') as xiinArgDict.someFile:
-                    xiinReadFileContents(xiinArgDict)
+                    self.xiinReadFileContents(xiinArgDict)
             except IOError:
                 pass
     #end
 
-    def xiinReadFileContents(xiinArgDict):
+    def xiinReadFileContents(self, xiinArgDict):
         """
         Read file contents and either display them or write them to a file.
         """
