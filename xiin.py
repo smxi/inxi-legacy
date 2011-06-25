@@ -553,4 +553,4 @@ if __name__ == '__main__':
 #end
 
 # for inxi downloader
-# EOF
+# EOF checkPython
