@@ -72,7 +72,7 @@ class XIIN(object):
         parser.add_option('-f', '--file', dest = 'filename', help = fileHelp)
         parser.add_option('-o', '--out', action = 'store_true', dest = 'display', help = displayHelp)
         parser.add_option('-g', '--grep', dest = 'grep', help = grepHelp)
-        parser.add_option('-u', '--upload', nargs=4, dest = 'upload', help = uploadHelp)
+        parser.add_option('-u', '--upload', nargs=2, dest = 'upload', help = uploadHelp)
 
         (options, args) = parser.parse_args()
 
