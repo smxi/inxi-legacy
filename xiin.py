@@ -44,7 +44,7 @@ class XIIN(object):
 
         xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-alpha-1"
+        xiinVersion = "%prog 2011.06.25-alpha-2"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -127,7 +127,7 @@ class XIIN(object):
         if xiinArgDict.display is True and xiinArgDict.filename is None:
             print('Starting xiin...')
             print('')
-            displayXiinInfo(xiinArgDict)
+            self.displayXiinInfo(xiinArgDict)
 
     # only write output
         elif xiinArgDict.display is None and xiinArgDict.filename is not None:
@@ -135,14 +135,14 @@ class XIIN(object):
             print('')
             print('Using options: ' + str(xiinArgDict))
             print('')
-            writeXiinInfo(xiinArgDict)
+            self.writeXiinInfo(xiinArgDict)
 
         elif xiinArgDict.grep is not None:
             print('Starting xiin...')
             print('')
             print('Searching files...')
             print('')
-            grepXiinInfo(xiinArgDict.grep)
+            self.grepXiinInfo(xiinArgDict.grep)
 
         elif xiinArgDict.upload is not None:
     #        xiin.ftp = {'source': '', 'destination': '', 'uname': '', 'password': ''}
