@@ -44,7 +44,7 @@ class XIIN(object):
 
         xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.24-4-alpha"
+        xiinVersion = "%prog 2011.06.25-0-alpha"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -110,12 +110,12 @@ class XIIN(object):
                 parser.error('xiin needs a directory')
                 exit(5)
         else:
-            print('Using xiin upload feature')
-    #        xiin.ftp = {'source': '', 'destination': '', 'uname': '', 'password': ''}
-            xiinArgDict.ftpSource      = xiinArgDict.upload[0]
-            xiinArgDict.ftpDestination = xiinArgDict.upload[1]
-            xiinArgDict.ftpUname       = xiinArgDict.upload[2]
-            xiinArgDict.ftpPwd         = xiinArgDict.upload[3]
+            if len(xiinArgDict.upload ) < 2:
+                print('')
+                parser.error('ERROR: No xiin upload options given')
+                parser.error('[Usage: uploader <source> <target> <uname> <password> ]')
+                print('')
+                exit(6)
     #end
 
     def xiinSwitch(self, xiinArgDict):
@@ -145,12 +145,35 @@ class XIIN(object):
             grepXiinInfo(xiinArgDict.grep)
 
         elif xiinArgDict.upload is not None:
-            uploader = XiinUploader()
-            print('Starting xiin...')
+    #        xiin.ftp = {'source': '', 'destination': '', 'uname': '', 'password': ''}
+
+            xiinArgDict.ftpSource      = None
+            xiinArgDict.ftpDestination = None
+            xiinArgDict.ftpUname       = None
+            xiinArgDict.ftpPwd         = None
+
+            if len(xiinArgDict.upload ) > 0:
+                xiinArgDict.ftpSource      = xiinArgDict.upload[0]
+                xiinArgDict.ftpDestination = xiinArgDict.upload[1]
+
+            if len(xiinArgDict.upload ) > 2:
+                # Legacy support
+                if xiinArgDict.ftpUname is 'anon' or xiinArgDict.ftpUname is 'anonymous':
+                    pass
+                else:
+                    xiinArgDict.ftpUname       = xiinArgDict.upload[2]
+                    xiinArgDict.ftpPwd         = xiinArgDict.upload[3]
+
+            print('Starting xiin uploader...')
             print('')
             print('Uploading debugging information...')
             print('')
-            uploader.uploadXiinInfo(xiinArgDict)
+
+            uploader = XiinUploader()
+            uploader.upload(xiinArgDict.ftpSource, xiinArgDict.ftpDestination, xiinArgDict.ftpUname, xiinArgDict.ftpPwd)
+        else:
+            print('ERROR: Unknown')
+            exit(7)
 
     #end
 
@@ -364,7 +387,9 @@ class PythonVersionCheck(object):
 
 class XiinUploader(object):
     """
-    Class for xiin's uploading feature
+    Uploads a specified file to a specified ftp sight.  \
+    [Usage: uploader <source> <target> <uname> <password> ] \
+    [Example: uploader /home/myhome/.inxi/some.txt somedomain.com/directory anon anon ]
     """
 
     # exit(0): success
@@ -380,66 +405,85 @@ class XiinUploader(object):
 
     def __init__(self):
         self = self
+
+        # Success
+        self.successFileUploaded        = 'SUCCESS: file uploaded'
+
+        # Error
+        self.errorConnectionFail        = 'ERROR: connection failed'
+        self.errorPasswordMissing       = 'ERROR: password missing'
+        self.errorLoginFail             = 'ERROR: login failed'
+        self.errorConnectionError       = 'ERROR: connection error'
+        self.errorDestinationNotFound   = 'ERROR: destination folder not found'
+        self.errorFileNotSaved          = 'ERROR: file not saved'
+        self.errorIncorrectFileType     = 'ERROR: Incorrect file type'
     #end
 
-    def uploadXiinInfo(self, xiinArgDict):
+    def upload(self, source, target, uname = None, password = None):
         """
-        Uploads debugging information.
+        Uploads debugging information
         """
 
-        destinationServer = os.path.split(xiinArgDict.ftpDestination)[0]
-        destinationFolder = os.path.split(xiinArgDict.ftpDestination)[1]
+        destination = os.path.split(target)
+
+        destinationServer = destination[0]
+        if len(destination) > 1:
+            destinationFolder = destination[1]
 
         try:
             ftp = ftplib.FTP(destinationServer)
         except:
-            print('ERROR: couldn\'t establish a connection')
+            print(self.errorConnectionFail)
             exit(3)
 
         try:
-            if xiinArgDict.ftpUname == 'anon':
+            if uname is None:
                 ftp.login()
             else:
-                ftp.login(xiinArgDict.ftpUname, xiinArgDict.ftpPwd)
+                if password is not None:
+                    ftp.login(uname, password)
+                else:
+                    print(self.errorPasswordMissing)
         except:
-            print('ERROR: couldn\'t login')
+            print(self.errorLoginFail)
             exit(4)
 
         print(ftp.getwelcome())
+
         if ftp.getwelcome().find('220') >= 0:
             print('Connected...')
         else:
-            print('ERROR: connection error')
+            print(self.errorConnectionError)
             exit(3)
 
-        try:
-            if destinationFolder is not None:
-                ftp.cwd(destinationFolder)
-                print('Opening ' + destinationFolder)
-        except:
-            print('ERROR: couldn\'t find destination folder')
-            exit(5)
 
-        self.upload(ftp, xiinArgDict.ftpSource)
+        if destinationFolder is not None:
+            try:
+                ftp.cwd(destinationFolder)
+                print('Opening /' + destinationFolder)
+            except:
+                print(self.errorDestinationNotFound)
+                exit(5)
+
+        self.do_upload(ftp, source)
 
         ftp.quit()
-        print('xiin successfully uploaded the file')
+        print(self.successFileUploaded)
         exit(0)
     #end
 
-    def upload(self, ftp, file):
+    def do_upload(self, ftp, file):
         """
-        Does the upload work.
+        Upload the file.
         """
 
-        extension = os.path.splitext(file)[1]
-        origDir = os.getcwd()
-        workingDir = os.path.split(file)[0]
-        workingFile = os.path.split(file)[1]
+        extension       = os.path.splitext(file)[1]
+        origDir         = os.getcwd()
+        workingDir      = os.path.split(file)[0]
+        workingFile     = os.path.split(file)[1]
+        savedFileName   = self.check_file_name(workingFile, ftp)
 
-        savedFileName = self.savedFileName(workingFile, ftp)
-
-        print('file: ' + workingFile)
+        print('Uploading: ' + workingFile)
 
         if extension in ('.tar.gz'):
             try:
@@ -448,14 +492,14 @@ class XiinUploader(object):
                 ftp.storbinary('STOR ' + savedFileName, open(workingFile))
                 os.chdir(origDir)
             except IOError:
-                print('ERROR: could not save file')
+                print(self.errorFileNotSaved)
                 exit(2)
         else:
-            print('ERROR: Incorrect file')
+            print(self.errorIncorrectFileType)
             exit(1)
     #end
 
-    def savedFileName(self, workingFile, ftp):
+    def check_file_name(self, workingFile, ftp):
         """
         Check the server for a same file name.
         """
@@ -464,12 +508,12 @@ class XiinUploader(object):
 
         for file in fileList:
             if file == workingFile:
-                workingFile = self.renameFile(workingFile)
+                workingFile = self.rename_file(workingFile)
 
         return workingFile
     #end
 
-    def renameFile(self, file):
+    def rename_file(self, file):
         """
         Renames a file so that it no longer conflicts.
         """
