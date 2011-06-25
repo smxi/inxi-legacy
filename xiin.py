@@ -44,7 +44,7 @@ class XIIN(object):
 
         xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-0-alpha"
+        xiinVersion = "%prog 2011.06.25-alpha"
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
