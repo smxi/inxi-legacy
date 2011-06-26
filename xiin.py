@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-#    author: Scott Rogers
-#    stability: alpha
-#    copying: 'Copyright (C) 2011 W. Scott Rogers
-#              This program is free software.
-#              You can redistribute it and/or modify it under the terms of the
-#              GNU General Public License as published by the Free Software Foundation;
-#              version 2 of the License.
-#
+__author__      = 'Scott Rogers, aka trash80'
+__stability__   = 'alpha'
+__version__     = '2011.06.25-7'
+__copying__     = """Copyright (C) 2011 W. Scott Rogers \
+                        This program is free software.
+                        You can redistribute it and/or modify it under the terms of the
+                        GNU General Public License as published by the Free Software Foundation;
+                        version 2 of the License.
+                    """
+
 #   Special thanks: h2, aka Harald Hope
 
 import os
@@ -26,6 +28,7 @@ class XIIN(object):
 
     def __init__(self):
         self = self
+        self.version = '%prog-{0}-{1}'
     #end
 
     def main(self, xiinArgs):
@@ -51,7 +54,6 @@ class XIIN(object):
         pass
     #end
 
-    # TODO: cheange this name to a more reflective meaningful name
     def setOptions(self, xiinArgs):
         """
         Starts the read capabilities
@@ -68,7 +70,7 @@ class XIIN(object):
 
 #        xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
-        xiinVersion = "%prog 2011.06.25-alpha-5"
+        xiinVersion = self.version.format(__version__, __stability__)
 
     #    defaultFile = os.environ['HOME'] + '/xiin.txt'
     #    defaultDir = '/sys'
@@ -552,5 +554,7 @@ if __name__ == '__main__':
     xiin.main(sys.argv)
 #end
 
-# for inxi downloader
+# For inxi downloader.
+# Do not change this last line.
+# Do not move it to any other location.
 # EOF checkPython
