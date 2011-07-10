@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__version__     = '2011.07.10-02'
+__version__     = '2011.07.10-03'
 __author__      = 'Scott Rogers, aka trash80'
 __stability__   = 'alpha'
 __copying__     = """Copyright (C) 2011 W. Scott Rogers \
@@ -8,15 +8,13 @@ __copying__     = """Copyright (C) 2011 W. Scott Rogers \
                         GNU General Public License as published by the Free Software Foundation;
                         version 2 of the License.
                     """
-
 #   Special thanks: h2, aka Harald Hope
-
 import os
 import sys
 
 ################################################################################
 ####
-####        Main xiin class
+####        Thin xiin frontend class
 ####
 ################################################################################
 
@@ -28,34 +26,44 @@ class XIIN(object):
 
     def __init__(self, textConf = 'xiin'):
         self = self
+        self.remoteUrl   = 'http://pyne.googlecode.com/svn/branches/testing/PyneTools/xiin/'
+        self.localUrl    = '{0}/'.format(os.getcwd())
     #end
 
     def main(self, xiinArgs):
-
+        """
+        Mostly a traffic director
+        """
         # self update
         self.__update_xiin()
-
         # do some xiin
         self.xiin(xiinArgs)
     #end
 
     def __update_xiin(self):
-        remoteUrl   = 'http://pyne.googlecode.com/svn/branches/testing/PyneTools/xiin/'
-        localUrl    = '{0}/'.format(os.getcwd())
-        
-        # Check for newer versions of xiin modules
-        update      = SelfUpdate()
-
-        update.update_all(localUrl, remoteUrl)
-#        update.update(localUrl, remoteUrl)
+        """
+        Update all modules to the newest versions.
+        """        
+        # update xiin modules
+        update = SelfUpdate()
+        update.update_all(self.localUrl, self.remoteUrl)
     #end
 
     def xiin(self, xiinArgs):
+        """
+        The actual xiin workhorse.  See base.py for more information.
+        """
         from base import Base
         xiinAction = Base()
         xiinAction.xiin(xiinArgs)
     #end
 #end
+
+################################################################################
+####
+####        xiin self updater class
+####
+################################################################################
 
 class SelfUpdate(object):
 
@@ -66,19 +74,19 @@ class SelfUpdate(object):
     #end
 
     def update_all(self, localUrl, remoteUrl):
-
+        """
+        Iterates over the module list.
+        """
         for modUpdate in self.modUpdateList:
             self.download(remoteUrl + modUpdate, localUrl + modUpdate)
     #end
 
     def download(self, source, destination):
         """
-        Download a new version of a module
+        Download a module.
         """
         import urllib2
         connection  = urllib2.urlopen(source)
-        self.set_module_dir(destination)
-
         try:
             with open(destination, 'w') as localFile:
                 while True:
@@ -89,16 +97,6 @@ class SelfUpdate(object):
             return True
         except:
             return False
-    #end
-
-    def set_module_dir(self, destination):
-        """
-        Creates a place for xiin modules if the folder doesn't exist.
-        """
-        import os
-        directory = os.path.dirname(destination)
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
     #end
 #end
 
