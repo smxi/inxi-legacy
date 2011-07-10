@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__version__     = '2011.07.10-00'
+__version__     = '2011.07.10-02'
 __author__      = 'Scott Rogers, aka trash80'
 __stability__   = 'alpha'
 __copying__     = """Copyright (C) 2011 W. Scott Rogers \
@@ -13,7 +13,6 @@ __copying__     = """Copyright (C) 2011 W. Scott Rogers \
 
 import os
 import sys
-import optparse
 
 ################################################################################
 ####
@@ -22,19 +21,19 @@ import optparse
 ################################################################################
 
 class XIIN(object):
+    """
+    A very thin frontend to all of xiin.  Keeps the external API while allowing
+    parts of xiin to be updated on the fly.
+    """
 
     def __init__(self, textConf = 'xiin'):
         self = self
-        self.version    = '%prog-{0}-{1}'
     #end
 
     def main(self, xiinArgs):
 
         # self update
         self.__update_xiin()
-
-        # check python version
-        self.__check_python_version()
 
         # do some xiin
         self.xiin(xiinArgs)
@@ -49,13 +48,6 @@ class XIIN(object):
 
         update.update_all(localUrl, remoteUrl)
 #        update.update(localUrl, remoteUrl)
-    #end
-
-    def __check_python_version(self):
-        from PythonVersionCheck import PythonVersionCheck
-        # check the Version of python
-        checkPython = PythonVersionCheck()
-        checkPython.check()
     #end
 
     def xiin(self, xiinArgs):
