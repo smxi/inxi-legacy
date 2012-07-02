@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 __version__     = '2012.07.01-01'
 __author__      = 'Scott Rogers, aka trash80'
 __stability__   = 'beta'
