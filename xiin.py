@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__version__     = '2012.07.01-02'
+__version__     = '2012.07.01-03'
 __author__      = 'Scott Rogers, aka trash80'
 __stability__   = 'beta'
 __copying__     = """Copyright (C) 2011 W. Scott Rogers \
@@ -470,7 +470,7 @@ class Uploader(object):
             try:
                 os.chdir(workingDir)
                 print(ftp.pwd())
-                ftp.storbinary('STOR ' + savedFileName, open(workingFile))
+                ftp.storbinary('STOR ' + savedFileName, open(workingFile, 'rb'))
                 os.chdir(origDir)
             except IOError:
                 print(self.errorFileNotSaved)
