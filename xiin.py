@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-__version__     = '2011.06.26-0'
+__version__     = '2012.07.01-01'
 __author__      = 'Scott Rogers, aka trash80'
-__stability__   = 'alpha'
+__stability__   = 'beta'
 __copying__     = """Copyright (C) 2011 W. Scott Rogers \
                         This program is free software.
                         You can redistribute it and/or modify it under the terms of the
@@ -10,7 +10,6 @@ __copying__     = """Copyright (C) 2011 W. Scott Rogers \
                     """
 
 #   Special thanks: h2, aka Harald Hope
-
 import os
 import sys
 import time
@@ -19,61 +18,67 @@ import optparse
 
 ################################################################################
 ####
-####        Main xiin class
+####        Thin xiin frontend class
 ####
 ################################################################################
 
 class XIIN(object):
+    """
+    A very thin frontend to all of xiin.  Keeps the external API while allowing
+    parts of xiin to be updated on the fly.
+    """
 
-    def __init__(self):
+    def __init__(self, textConf = 'xiin'):
         self = self
-        self.version = '%prog-{0}-{1}'
+        self.remoteUrl   = 'http://inxi.googlecode.com/svn/branches/xiin'
+        self.localUrl    = '{0}/'.format(os.getcwd())
     #end
 
     def main(self, xiinArgs):
         """
-        Start here and guide along
+        Mostly a traffic director
         """
-        self.setOptions(xiinArgs)
-        # check Python version. 2.6 is the minimum, 3.0 is supported.
-
-        ## xiin will have the ability to update itself so that modules are
-        ## always up to date.
-        # CAUTION: be careful not to break external API (legacy support, if needed)
-        # check if modules (xiin libraries exist)
-        # if (exist): upgrade; else: install
-
-        # update config file (will overwrite old.  TODO: modify but don't overwrite old config file)
-            # xiin.conf.yml file
-
-        # Once up to date, if new python version module, check version again.
-
-        # run Options
-
-        pass
+        # do some xiin
+        self.xiin(xiinArgs)
     #end
 
-    def setOptions(self, xiinArgs):
+    def xiin(self, xiinArgs):
+        """
+        The actual xiin workhorse.  See base.py for more information.
+        """
+        xiinAction = Base()
+        xiinAction.xiin(xiinArgs)
+    #end
+#end
+
+################################################################################
+####
+####        base.py
+####
+################################################################################
+
+class Base(object):
+
+    def __init__(self, textConf = 'xiin'):
+        self = self
+        self.version    = '%prog-{0}-{1}'
+    #end
+
+    def xiin(self, xiinArgs):
         """
         Starts the read capabilities
         """
+
         # http://docs.python.org/library/optparse.html
 
-        checkPython = PythonVersionCheck()
-        checkPython.check()
-
         xiinDesc = """ xiin is a directory parser meant to help debug inxi(www.inxi.org) bugs.
-            xiin will take a given directory, usually /sys or /proc and write the contents
+            xiin will take a given directory, usually /sys *[or /proc] and write the contents
             to a specified file in key:value format where key is the directory/filename
             and value is the contents of key."""
 
 #        xiinUsage   = "%prog [-d] <directory to read> [-f] <file to write>"
 
         xiinVersion = self.version.format(__version__, __stability__)
-
-    #    defaultFile = os.environ['HOME'] + '/xiin.txt'
-    #    defaultDir = '/sys'
-    #    defaultDisplay = False
 
         dirHelp     = 'Directory containing files. \
                         [Usage:  ] \
@@ -90,6 +95,9 @@ class XIIN(object):
         uploadHelp  = 'Uploads a specified file to a specified ftp sight.  \
                         [Usage: xiin -u <source> <target> <uname> <password> ] \
                         [Example: xiin -u /home/myhome/.inxi/some.txt somedomain.com anon anon ]'
+        upgradeHelp = 'Upgrades xiin to the newest version. \
+                        [Usage: xiin -U <from url> \
+                        [Example: xiin -u http://inxi.googlecode.com/svn/branches/xiin'
 
         self.parser = optparse.OptionParser(description = xiinDesc, version = xiinVersion)
 
@@ -98,22 +106,22 @@ class XIIN(object):
         self.parser.add_option('-o', '--out', action = 'store_true', dest = 'display', help = displayHelp)
         self.parser.add_option('-g', '--grep', dest = 'grep', help = grepHelp)
         self.parser.add_option('-u', '--upload', nargs=2, dest = 'upload', help = uploadHelp)
+        self.parser.add_option('-U', '--update', nargs=1, dest = 'upgrade', help = upgradeHelp)
 
         (options, args) = self.parser.parse_args()
 
         options.args = xiinArgs
 
-        self.xiinUseChecker(options)
-        self.xiinSwitch(options)
+        self.__use_checker(options)
+        self.__switch(options)
 
         exit(0)
     #end
 
-    def xiinUseChecker(self, xiinArgDict):
+    def __use_checker(self, xiinArgDict):
         """
         Checks for use errors.
         """
-
         if xiinArgDict.upload is None:
         # no arguements specified, so display helpful error
             if len(xiinArgDict.args) < 2:
@@ -134,30 +142,45 @@ class XIIN(object):
             elif xiinArgDict.directory is None:
                 self.parser.error('xiin needs a directory')
                 exit(5)
-        else:
-            if len(xiinArgDict.upload ) < 2:
-                print('')
-                self.parser.error('ERROR: No xiin upload options given')
-                self.parser.error('[Usage: uploader <source> <target> <uname> <password> ]')
-                exit(6)
+
+        elif len(xiinArgDict.upload ) < 2:
+            print('')
+            self.parser.error('ERROR: No xiin upload options given')
+            self.parser.error('[Usage: uploader <source> <target> <uname> <password> ]')
+            exit(6)
     #end
 
-    def xiinSwitch(self, xiinArgDict):
+    def __switch(self, xiinArgDict):
         """
         Traffic director.
         """
+        reader = Reader()
 
-    # only display output
-        if xiinArgDict.display is True and xiinArgDict.filename is None:
+        # upgrade from specific url
+        if xiinArgDict.upgrade is not None:
+            print('In Development. DO NOT USE!')
+#            print('Starting xiin upgrade')
+#            print('')
+#            # self update
+#            if len(xiinArgDict.upgrade) == 0:
+#                xiinArgDict.upgradeUrl = self.remoteUrl
+#            elif len(xiinArgDict.upgrade) == 1:
+#                xiinArgDict.upgradeUrl = xiinArgDict.upgrade[0]
+
+#            self.__update_xiin()
+
+        # Write output
+        elif xiinArgDict.filename is not None:
             print('Starting xiin...')
             print('')
-            self.displayXiinInfo(xiinArgDict)
+            with open(xiinArgDict.filename, 'w') as xiinArgDict.outputFile:
+                reader.info(xiinArgDict)
 
-    # only write output
-        elif xiinArgDict.display is None and xiinArgDict.filename is not None:
+        #Displays output.
+        elif xiinArgDict.display:
             print('Starting xiin...')
             print('')
-            self.writeXiinInfo(xiinArgDict)
+            reader.info(xiinArgDict)
 
         elif xiinArgDict.grep is not None:
             print('Starting xiin...')
@@ -167,18 +190,17 @@ class XIIN(object):
             self.grepXiinInfo(xiinArgDict.grep)
 
         elif xiinArgDict.upload is not None:
-    #        xiin.ftp = {'source': '', 'destination': '', 'uname': '', 'password': ''}
 
             xiinArgDict.ftpSource      = None
             xiinArgDict.ftpDestination = None
             xiinArgDict.ftpUname       = None
             xiinArgDict.ftpPwd         = None
 
-            if len(xiinArgDict.upload ) > 0:
+            if len(xiinArgDict.upload) > 0:
                 xiinArgDict.ftpSource      = xiinArgDict.upload[0]
                 xiinArgDict.ftpDestination = xiinArgDict.upload[1]
 
-            if len(xiinArgDict.upload ) > 2:
+            if len(xiinArgDict.upload) > 2:
                 # Legacy support
                 if xiinArgDict.ftpUname is 'anon' or xiinArgDict.ftpUname is 'anonymous':
                     pass
@@ -191,44 +213,38 @@ class XIIN(object):
             print('Uploading debugging information...')
             print('')
 
-            uploader = XiinUploader()
+            uploader = Uploader()
             uploader.upload(xiinArgDict.ftpSource, xiinArgDict.ftpDestination, xiinArgDict.ftpUname, xiinArgDict.ftpPwd)
         else:
             print('ERROR: Unknown')
             exit(7)
-
     #end
 
-    def displayXiinInfo(self, xiinArgDict):
-        """
-        Opens the write file and directs the walker, also displays output.
-        """
+    def __check_python_version(self):
+        # check the Version of python
+        checkPython = PythonVersionCheck()
+        checkPython.check()
+    #end
+#end
 
-        print("Getting info")
-        print('')
+################################################################################
+####
+####        reader.py
+####
+################################################################################
 
-        for root, dirs, files in os.walk(xiinArgDict.directory):
-            for file in files:
-                xiinArgDict.fullPathFile = os.path.join(root, file)
-                self.xiinOpenFile(xiinArgDict)
+class Reader(object):
+
+    def __init__(self):
+        self = self
     #end
 
-    def writeXiinInfo(self, xiinArgDict):
-        """
-        Opens the write file and directs the walker, also displays output.
-        """
-
-        print("Getting info")
-        print('')
-
-        with open(xiinArgDict.filename, 'w') as xiinArgDict.outputFile:
-            self.xiinDirectoryWalker(xiinArgDict)
-    #end
-
-    def xiinDirectoryWalker(self, xiinArgDict):
+    def info(self, xiinArgDict):
         """
         Walks the directory.
         """
+        print("Getting info")
+        print('')
 
         spinner = Spinner()
 
@@ -236,72 +252,68 @@ class XIIN(object):
 
         for root, dirs, files in os.walk(xiinArgDict.directory):
             for file in files:
-                spinner.render(count)
-                count = count + 1
                 xiinArgDict.fullPathFile = os.path.join(root, file)
-                self.xiinOpenFile(xiinArgDict)
+                self.__readFile(xiinArgDict)
+                # show spinner when writing files
+                if not xiinArgDict.display:
+                    spinner.render(count)
+                    count = count + 1
     #end
 
-    def xiinOpenFile(self, xiinArgDict):
+    def __readFile(self, xiinArgDict):
         """
         Opens a file and prep to read.
         """
-
-        #  reading some file in /sys will turn off some monitors, so we do this:
-        if xiinArgDict.directory == '/sys':
-            try:
-                if os.stat(xiinArgDict.fullPathFile).st_size:
-                    with open(xiinArgDict.fullPathFile, 'r') as xiinArgDict.someFile:
-                        self.xiinReadFileContents(xiinArgDict)
-            except:
-                pass
-        else:
-            # other files seem alright
-            try:
-                with open(xiinArgDict.fullPathFile, 'r') as xiinArgDict.someFile:
-                    self.xiinReadFileContents(xiinArgDict)
-            except IOError:
-                pass
+        try:
+            if os.stat(xiinArgDict.fullPathFile).st_size:
+                with open(xiinArgDict.fullPathFile, 'r') as xiinArgDict.key:
+                    _hash = self.__hash(xiinArgDict)
+                    if xiinArgDict.display:
+                        print(_hash)
+                    elif xiinArgDict.filename is not None:
+                        xiinArgDict.outputFile.writelines(_hash)
+                    else:
+                        print('ERROR: Nothing to do')
+                        exit(8)
+        except:
+            pass
     #end
 
-    def xiinReadFileContents(self, xiinArgDict):
+    def __hash(self, xiinArgDict):
         """
-        Read file contents and either display them or write them to a file.
+        Returns a key[ directory ]:value [contents] hash.
         """
+        _hash = ''
 
-        contents = []
         try:
-            contents = xiinArgDict.someFile.readlines()
+            return '{0}:{1}\n'.format(
+                str(xiinArgDict.fullPathFile),
+                str(xiinArgDict.key.readlines()).replace('\\n','')
+            )
         except:
             pass
 
-        if contents:
-            key = str(xiinArgDict.fullPathFile)#.replace('/', '.').replace('.', '', 1)
-
-            value = str(contents).replace('\\n','')
-
-            if value != '[\'\']':
-                if xiinArgDict.display:
-                    print(key + ':' + value)
-                else:
-                    xiinArgDict.outputFile.writelines(key + ':' + value + ':' + '\n')
+        return _hash
     #end
 #end
 
 ################################################################################
 ####
-####        xiin spinner class
+####        spinner.py
 ####
 ################################################################################
 
 class Spinner(object):
+    """
+    Spinner Class used to show a busy spinner within a loop.
+    [Usage:     spinner.render(counter) ]
+    """
 
     def __init__(self, typeOfSpinner = [ ' [\\] ', ' [|] ', ' [/] ', ' [-] '], color = None):
         """
         typeOfSpinner:  A dictionary of characters to use as the spinner.
         color:          The color of the spinner. Supports ASCII colors. [Default: stdio default ]
         """
-
         self = self
         self.typeOfSpinner  = typeOfSpinner
         self.color          = color
@@ -312,7 +324,6 @@ class Spinner(object):
         """
         Displays a busy spinner.
         """
-
         spinner = self.typeOfSpinner
         counter = (((count - 1)/4)%4)
 
@@ -320,100 +331,46 @@ class Spinner(object):
             self.mod = self.mod + 1
             if self.mod > 3:
                 self.mod = 0
-            print(spinner[self.mod]),
+            sys.stdout.write('\r' + str(spinner[self.mod]))
             sys.stdout.flush()
-            sys.stdout.write('\r')
 
     #end
 
-    def setSpinnerImage(self, typeOfSpinner):
+    def set_spinner_image(self, typeOfSpinner):
         """
         typeOfSpinner: A dictionary of characters to use as the spinner.
         """
         self.typeOfSpinner = typeOfSpinner
     #end
 
-    def setSpinnerColor(self, color):
+    def set_spinner_color(self, color):
         """
         color: The color of the spinner. Supports ASCII colors. [Default: stdio default ]
         """
         self.color = color
     #end
 
-    def getSpinnerImage(self):
+    def get_spinner_image(self):
         return self.typeOfSpinner
     #end
 
-    def getSpinnerColor(self):
+    def get_spinner_color(self):
         return self.color
     #end
-
 #end
 
 ################################################################################
 ####
-####        xiin Python version checker class
+####        uploader.py
 ####
 ################################################################################
 
-class PythonVersionCheck(object):
-    # http://stackoverflow.com/questions/1093322/how-do-i-check-what-version-of-python-is-running-my-script
-
-    def __init__(self):
-        """
-
-        """
-        
-        self = self
-        self.lowestVersion = None
-    #end
-
-    def check(self):
-            """
-            Detects Python compatibility.
-            """
-
-            pythonVersionText = 'Detecting Python version...[version 2.6+ required]...'
-            pythonVersionErrorText = 'ERROR: Incorrect Python version: 2.6+ is required'
-            pythonVersionPassText = 'Passed...continuing'
-
-            print('')
-            print(pythonVersionText)
-
-            if (self.lowestVersion is None):
-                self.setMinimumVersion()
-
-            if sys.hexversion < self.lowestVersion:
-                print('')
-                print(pythonVersionErrorText)
-                exit(1)
-            else:
-                print(pythonVersionPassText)
-                print('')
-                return
-        #end
-
-    def setMinimumVersion(self, lowestVersion = 0x02060000):
-        """
-        lowestVersion:  The minimum python version required. [Default: 2.6 ]
-        """
-        self.lowestVersion = lowestVersion
-    #end
-#end
-
-################################################################################
-####
-####        xiin uploader class
-####
-################################################################################
-
-class XiinUploader(object):
+class Uploader(object):
     """
     Uploads a specified file to a specified ftp sight.  \
     [Usage: uploader <source> <target> <uname> <password> ] \
     [Example: uploader /home/myhome/.inxi/some.txt somedomain.com/directory anon anon ]
     """
-
     # exit(0): success
     # exit(1): incorrect file
     # exit(2): saving file error
@@ -441,11 +398,14 @@ class XiinUploader(object):
         self.errorIncorrectFileType     = 'ERROR: Incorrect file type'
     #end
 
+    def upload(self, source, target):
+        self.upload(source, target, None, None)
+    #end
+
     def upload(self, source, target, uname = None, password = None):
         """
         Uploads debugging information
         """
-
         destination = os.path.split(target)
 
         destinationServer = destination[0]
@@ -482,7 +442,7 @@ class XiinUploader(object):
         if destinationFolder is not None:
             try:
                 ftp.cwd(destinationFolder)
-                print('Opening /' + destinationFolder)
+                print('Opening: {0}'.format(destinationFolder))
             except:
                 print(self.errorDestinationNotFound)
                 exit(5)
@@ -498,14 +458,13 @@ class XiinUploader(object):
         """
         Upload the file.
         """
-
         extension       = os.path.splitext(file)[1]
         origDir         = os.getcwd()
         workingDir      = os.path.split(file)[0]
         workingFile     = os.path.split(file)[1]
         savedFileName   = self.check_file_name(workingFile, ftp)
 
-        print('Uploading: ' + workingFile)
+        print('file: ' + workingFile)
 
         if extension in ('.tar.gz'):
             try:
@@ -525,7 +484,6 @@ class XiinUploader(object):
         """
         Check the server for a same file name.
         """
-
         fileList = ftp.nlst()
 
         for file in fileList:
@@ -539,7 +497,6 @@ class XiinUploader(object):
         """
         Renames a file so that it no longer conflicts.
         """
-
         file = file.split('.', 1)
         extension = str(time.time()).split('.', 1)[0]
         newName = file[0] + '-' + extension + '.' + file[1]
@@ -548,7 +505,72 @@ class XiinUploader(object):
     #end
 #end
 
+################################################################################
+####
+####        PythonVersionCheck.py
+####
+################################################################################
+
+class PythonVersionCheck(object):
+    """
+        Checks the Python version and stops progression is Python version is too old.
+    """
+    # http://stackoverflow.com/questions/1093322/how-do-i-check-what-version-of-python-is-running-my-script
+
+    def __init__(self, lowestVersion = 0x02060000):
+        self = self
+        self.lowestVersion = lowestVersion
+        self.pythonThreeVersion = 0x03000000
+    #end
+
+    def check(self, useVersionFile = False):
+        """
+        Detects Python compatibility.
+        """
+        pythonVersionText = 'Detecting Python version...[version 2.6+ required]...'
+        pythonVersionErrorText = 'ERROR: Incorrect Python version: 2.6+ is required'
+        pythonVersion3ErrorText = 'ERROR: Not Python3 compatible: 2.6-2.7 is required'
+        pythonVersionPassText = 'Passed...continuing'
+
+        print('')
+        print(pythonVersionText)
+
+        # create a file, if it exist, no reason to check again.
+        verFile = os.path.join(os.getcwd(), str(sys.hexversion))
+
+        if os.path.isfile(verFile) and useVersionFile is True:
+            print('version file exists')
+            pass
+        else:
+            if sys.hexversion < self.lowestVersion:
+                print('')
+                print(pythonVersionErrorText)
+                exit(1)
+#            elif sys.hexversion > self.pythonThreeVersion:
+#                print('')
+#                print(pythonVersion3ErrorText)
+#                exit(1)
+            else:
+                print(pythonVersionPassText)
+                print('')
+                if useVersionFile is True:
+                    with open(verFile, 'w') as xiinPyVer:
+                        xiinPyVer.write(str(sys.hexversion))
+                return
+    #end
+
+    def setMinimumVersion(self, lowestVersion):
+        """
+        lowestVersion:  The minimum python version required. [Default: 2.6 ]
+        """
+        self.lowestVersion = lowestVersion
+    #end
+#end
+
 if __name__ == '__main__':
+    # check the Version of python
+    checkPython = PythonVersionCheck()
+    checkPython.check()
     xiin = XIIN()
     xiin.main(sys.argv)
 #end
