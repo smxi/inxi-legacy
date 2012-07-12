@@ -1,0 +1,135 @@
+{
+"xiin": {
+  "description" : [
+        "xiin is a directory parser meant to help debug inxi(www.inxi.org) bugs.",
+        "xiin will take a given directory, usually /sys *[or /proc] and write the contents",
+        "to a specified file in key:value format where key is the directory/filename",
+        "and value is the contents of key."
+    ],
+  "version" : "2012.07.04-00",
+  "language": "American-English",
+  "global": {
+    "usage"   : "[Usage:  {0} ]",
+    "example" : "[Example:  {0} ]",
+    "success" : "SUCCESS: {0}!",
+    "error"   : "ERROR: {0}!",
+    "unknown" : "Unknown",
+    "exit": {
+      "0"     : "success",
+      "1"     : "incorrect file",
+      "2"     : "saving file error",
+      "3"     : "connection error",
+      "4"     : "login error",
+      "5"     : "error finding directory"
+    }
+  },
+  "help": {
+    "format": "{0}\n{1}\n{2}",
+    "directory": {
+      "explain" : "Directory containing files.",
+      "usage"   : "",
+      "example" : ""
+    },
+    "file": {
+      "explain" : "If used write report to file, otherwise write output to the screen.",
+      "usage"   : "",
+      "example" : ""
+    },
+    "display": {
+      "explain" : "Prints to terminal not to a file.  Cannot use with -f option.",
+      "usage"   : "",
+      "example" : ""
+    },
+    "grep": {
+      "explain" : "Grep-like function. Can be sent to display(default) or file.",
+      "usage"   : "Unused at this time",
+      "example" : ""
+    },
+    "upload": {
+      "explain" : "Uploads a specified file to a specified ftp sight.",
+      "usage"   : "xiin -u <source> <target> <uname> <password>",
+      "example" : "xiin -u /home/myhome/.inxi/some.txt somedomain.com anon anon"
+    },
+    "upgrade": {
+      "explain" : "Upgrades xiin to the newest version.",
+      "usage"   : "xiin -U <from url>",
+      "example" : "xiin -u http://inxi.googlecode.com/svn/branches/xiin"
+    }
+  },
+  "validation": {
+    "directory": {
+        "error" : "xiin can not walk /proc!",
+        "needs" : "xiin needs a directory"
+    },
+    "file": {
+        "error" : "Specify to display output or send to a file."
+    },
+    "display": {
+        "error" : ""
+    },
+    "grep": {
+        "error" : ""
+    },
+    "upload": {
+        "error" : "No xiin upload options given"
+    },
+    "upgrade": {
+        "error" : ""
+    }
+  },
+
+  "processing": {
+    "starting": {
+      "xiin"      : "Starting xiin...",
+      "uploader"  : "Starting xiin uploader..."
+    },
+    "searching": {
+      "files"     : "Searching files..."
+    },
+    "uploading": {
+      "debugging" : "Uploading debugging information..."
+    }
+  },
+
+  "reader": {
+    "get"   : "Getting info",
+    "error" : "Nothing to do",
+    "hash"  : "{0}:{1}\n"
+  },
+
+  "spinner": {
+    "default" : "' [\\] ', ' [|] ', ' [/] ', ' [-] '",
+    "color"   : "None"
+  },
+
+  "uploader": {
+    "connecting"    : "Connected...",
+    "opening"       : "Opening: {0}",
+    "file"          : "File: {0}",
+    "extension"     : ".tar.gz",
+    "success": {
+      "uploaded"    : "file uploaded"
+    },
+    "error": {
+      "failed"      : "connection failed",
+      "password"    : "password missing",
+      "login"       : "login failed",
+      "connection"  : "connection error",
+      "destination" : "destination folder not found",
+      "saved"       : "file not saved",
+      "type"        : "Incorrect file type"
+    }
+  },
+  "version": {
+    "hex": {
+      "minimal" : "0x02060000",
+      "three"   : "0x03000000"
+    },
+    "text"      : "Detecting Python version...[version 2.6+ required]...",
+    "pass"      : "Incorrect Python version: 2.6+ is required",
+    "error"     : "Passed...continuing",
+    "file": {
+      "exists"  : "version file exists"
+    }
+  }
+}}
