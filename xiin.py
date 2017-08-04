@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__version__     = '2012.07.01-03'
+__version__     = '2017.08.04-01'
 __author__      = 'Scott Rogers, aka trash80'
 __stability__   = 'beta'
 __copying__     = """Copyright (C) 2011 W. Scott Rogers \
@@ -8,7 +8,11 @@ __copying__     = """Copyright (C) 2011 W. Scott Rogers \
                         GNU General Public License as published by the Free Software Foundation;
                         version 2 of the License.
                     """
-
+"""
+Changes:
+2017.08.04-01 - fixed download location
+2012.07.01-03 - previous 
+"""
 #   Special thanks: h2, aka Harald Hope
 import os
 import sys
@@ -30,7 +34,7 @@ class XIIN(object):
 
     def __init__(self, textConf = 'xiin'):
         self = self
-        self.remoteUrl   = 'http://inxi.googlecode.com/svn/branches/xiin'
+        self.remoteUrl   = 'https://raw.githubusercontent.com/smxi/inxi/xiin'
         self.localUrl    = '{0}/'.format(os.getcwd())
     #end
 
