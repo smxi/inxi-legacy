@@ -1,28 +1,33 @@
 README for inxi - a command line system information tool
 
-NOTE: This is the LEGACY branch of inxi. If you want the current
-Perl version, which is the only version which is maintained, go to
-the master branch.
+NOTE: This is the LEGACY branch of inxi. So that you can run it
+together with inxi, this version has been renamed to binxi (Bash
+inxi) If you want the current Perl version, which is the only 
+version which is maintained, go to the master branch.
 
 This branch is here only for legacy historical purposes, or in case 
 someone wants to work with the legacy inxi Gawk/Bash code themselves.
 
 =====================================================================
-You can clone inxi-legacy using this command:
+If you want to run binxi, or clone this branch:
 
+To run binxi:
+wget -O /usr/local/bin/binxi https://github.com/smxi/inxi/raw/inxi-perl/binxi
+
+To clone this branch:
 git clone https://github.com/smxi/inxi --branch inxi-legacy --single-branch
 
 =====================================================================
 SUPPORT INFO:
 
-Do not ask for help related to legacy Gawk/Bash inxi, you won't get any. 
+Do not ask for help related to legacy Gawk/Bash binxi, you won't get any. 
 
 DOCUMENTATION: http://smxi.org/docs/inxi.htm 
 (smxi.org/docs/ is easier to remember, and is one click away from inxi.htm)
 The one page wiki on github is only a pointer to the real resources.
 
 LEGACY HTML MAN PAGE: http://smxi.org/docs/inxi-man-2.x.htm 
-LEGACY INXI OPTIONS: http://smxi.org/docs/inxi-options-2.x.htm 
+LEGACY MENU OPTIONS: http://smxi.org/docs/inxi-options-2.x.htm 
 
 ISSUES: https://github.com/smxi/inxi/issues
 No issues accepted for non current inxi master branch releases.
@@ -35,7 +40,7 @@ DEVELOPER FORUMS: http://techpatterns.com/forums/forum-32.html
 
 SOURCE VERSION CONTROL: https://github.com/smxi/inxi
 MAIN BRANCH: master
-DEVELOPMENT BRANCHES: inxi-perl, one, two, three, android.
+DEVELOPMENT BRANCHES: inxi-perl, one, two, three.
 ALTERNATE BRANCHES: inxi-legacy (this one), master-plain (without gz files)
 
 PULL REQUESTS: None for this branch unless you did a really good job and 

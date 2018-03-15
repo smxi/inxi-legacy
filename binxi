@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 ########################################################################
-SELF_NAME='inxi' 
+SELF_NAME='binxi' 
 # don't quote the following, parsers grab these too
 SELF_VERSION=2.3.56
-SELF_DATE=2018-02-26
-SELF_PATCH=00
+SELF_DATE=2018-03-15
+SELF_PATCH=001-b
 ########################################################################
 ####  SPECIAL THANKS
 ########################################################################
@@ -491,12 +491,13 @@ ALTERNATE_FTP='' # for data uploads
 ALTERNATE_WEATHER_LOCATION='' # weather alternate location
 SELF_CONFIG_DIR=''
 SELF_DATA_DIR=''
-LOG_FILE='inxi.log'
-LOG_FILE_1='inxi.1.log'
-LOG_FILE_2='inxi.2.log'
+LOG_FILE='binxi.log'
+LOG_FILE_1='binxi.1.log'
+LOG_FILE_2='binxi.2.log'
 MAN_FILE_DOWNLOAD='https://github.com/smxi/inxi/raw/master/inxi.1.gz'
 SELF_PATH='' # filled-in in Main
-SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/master/'
+#SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/master/'
+SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/inxi-legacy/'
 SELF_DOWNLOAD_BRANCH_1='https://github.com/smxi/inxi/raw/one/'
 SELF_DOWNLOAD_BRANCH_2='https://github.com/smxi/inxi/raw/two/'
 SELF_DOWNLOAD_BRANCH_3='https://github.com/smxi/inxi/raw/three/'
@@ -571,7 +572,7 @@ COLOR_SCHEME=''
 C1=''
 C2=''
 CN=''
-## Always leave these blank, these are only going to be set in inxi.conf files, that makes testing
+## Always leave these blank, these are only going to be set in binxi.conf files, that makes testing
 ## for user changes easier after sourcing the files
 ESC='\x1b'
 GLOBAL_COLOR_SCHEME=''
@@ -871,7 +872,7 @@ check_recommended_apps()
 	if [[ ${bash_array_test[1]} -eq "two" ]];then
 		B_BASH_ARRAY='true'
 	else
-		self_debugger "Suggestion: update to Bash v3.1 for optimal inxi output"
+		self_debugger "Suggestion: update to Bash v3.1 for optimal $SELF_NAME output"
 	fi
 	# test for a few apps that bsds may not have after initial tests
 	if type -p lspci &>/dev/null;then
@@ -1414,7 +1415,7 @@ select_default_color_scheme()
 		fi
 	else
 		print_screen_output "$LINE1"
-		print_lines_basic "0" "" "After finding the scheme number you like, simply run this again in a terminal to set the configuration data file for your irc client. You can set color schemes for the following: start inxi with -c plus:"
+		print_lines_basic "0" "" "After finding the scheme number you like, simply run this again in a terminal to set the configuration data file for your irc client. You can set color schemes for the following: start $SELF_NAME with -c plus:"
 		print_screen_output "94 (console, no X - $console); 95 (terminal, X - $virt_term); 96 (irc, gui, X - $irc_gui);"
 		print_screen_output "97 (irc, X, in terminal - $irc_x_term); 98 (irc, no X - $irc_console); 99 (global - $global)"
 		exit 0
@@ -1891,14 +1892,14 @@ debug_data_collector()
 			echo "Creating $SELF_NAME output file now. This can take a few seconds..."
 			echo "Starting $SELF_NAME from: $start_directory"
 			cd $start_directory
-			$SELF_PATH/$SELF_NAME -F${debug_i}Rfrploudmxxx -c 0 -@ 8 -y 120 > $SELF_DATA_DIR/$Debug_Data_Dir/inxi-F${debug_i}Rfrploudmxxxy120.txt
+			$SELF_PATH/$SELF_NAME -F${debug_i}Rfrploudmxxx -c 0 -@ 8 -y 120 > $SELF_DATA_DIR/$Debug_Data_Dir/$SELF_NAME-F${debug_i}Rfrploudmxxxy120.txt
 			cp $LOG_FILE $SELF_DATA_DIR/$Debug_Data_Dir
-		elif type -p inxi &>/dev/null;then
+		elif type -p $SELF_NAME &>/dev/null;then
 			echo $Line
-			echo "Creating basic inxi output file..."
-			inxi -Fxxx > $Debug_Data_Dir/inxi-Fxxx.txt
+			echo "Creating basic $SELF_NAME output file..."
+			$SELF_NAME -Fxxx > $Debug_Data_Dir/$SELF_NAME-Fxxx.txt
 		else 
-			touch $Debug_Data_Dir/inxi-absent.txt
+			touch $Debug_Data_Dir/$SELF_NAME-absent.txt
 		fi
 		cd $SELF_DATA_DIR
 		echo $Line
@@ -2212,7 +2213,7 @@ error_handler()
 			error_message="unsupported testing option argument: -! $2"
 			;;
 		12)
-			error_message="the git branch download url: $2\nappears to be empty currently. Make sure there is an actual source branch version\nactive before you try this again. Check https://github.com/smxi/inxi\nto verify the branch status."
+			error_message="the git branch download url: $2\nappears to be empty currently. Make sure there is an actual source branch version\nactive before you try this again. Check https://github.com/smxi/$SELF_NAME\nto verify the branch status."
 			;;
 		13)
 			error_message="The -t option requires the following extra arguments (no spaces between letters/numbers):\nc m cm [required], for example: -t cm8 OR -t cm OR -t c9\n(numbers: 1-20, > 5 throttled to 5 in irc clients) You entered: $2"
@@ -2256,7 +2257,7 @@ error_handler()
 #### -------------------------------------------------------------------
 
 # called in the initial -@ 10 script args setting so we can get logging as soon as possible
-# will have max 3 files, inxi.log, inxi.1.log, inxi.2.log
+# will have max 3 files, binxi.log, binxi.1.log, binxi.2.log
 create_rotate_logfiles()
 {
 	# do the rotation if logfile exists
@@ -2645,7 +2646,7 @@ self_updater()
 	set_downloader
 	local downloader_error=0 file_contents='' downloader_man_error=0 
 	local man_file_location=$( set_man_location )
-	local man_file_path="$man_file_location/inxi.1.gz" 
+	local man_file_path="$man_file_location/$SELF_NAME.1.gz" 
 	
 	if [[ $B_IRC == 'true' ]];then
 		print_screen_output "Sorry, you can't run the $SELF_NAME self updater option (-$3) in an IRC client."
@@ -2699,9 +2700,9 @@ self_updater()
 			else
 				if [[ $B_ROOT == 'true' ]];then
 					print_screen_output "Checking Man page download URL..."
-					if [[ -f /usr/share/man/man8/inxi.8.gz ]];then
+					if [[ -f /usr/share/man/man8/$SELF_NAME.8.gz ]];then
 						print_screen_output "Updating man page location to man1."
-						mv -f /usr/share/man/man8/inxi.8.gz $man_file_location/inxi.1.gz 
+						mv -f /usr/share/man/man8/$SELF_NAME.8.gz $man_file_location/$SELF_NAME.1.gz 
 						if type -p mandb &>/dev/null;then
 							exec $( type -p mandb ) -q 
 						fi
@@ -2743,7 +2744,7 @@ self_updater()
 							print_screen_output "Oh no! Something went wrong downloading the Man gz file at: $MAN_FILE_DOWNLOAD"
 							print_screen_output "Check the error messages for what happened. Error: $downloader_man_error"
 						else
-							print_screen_output "Download/install of man page successful. Check to make sure it works: man inxi"
+							print_screen_output "Download/install of man page successful. Check to make sure it works: man $SELF_NAME"
 						fi
 					else
 						print_screen_output "Man file download URL failed, unable to continue: $MAN_FILE_DOWNLOAD"
@@ -2781,7 +2782,7 @@ set_man_location()
 	fi
 	
 	# for distro installs, existing inxi man manual installs, do nothing
-	if [[ -f $default_location/inxi.1.gz ]];then
+	if [[ -f $default_location/$SELF_NAME.1.gz ]];then
 		location=$default_location
 	else
 		if [[ $b_use_local == 'true' ]];then
@@ -3295,7 +3296,8 @@ get_parameters()
 				fi
 				;;
 			U)	if [[ $B_ALLOW_UPDATE == 'true' ]];then
-					self_updater "$SELF_DOWNLOAD" 'source server' "$opt"
+					#self_updater "$SELF_DOWNLOAD" 'source server' "$opt"
+					self_updater "$SELF_DOWNLOAD" 'legacy branch server' "$opt"
 				else
 					error_handler 17 "-$opt"
 				fi
@@ -3398,7 +3400,8 @@ get_parameters()
 					3)	B_TESTING_1='true'
 						B_TESTING_2='true'
 						;;
-					1[0-3]|http*)
+					#1[0-3]|http*)
+					10|http*)
 						if [[ $B_ALLOW_UPDATE == 'true' ]];then
 							case $OPTARG in
 								10)
@@ -3626,7 +3629,7 @@ show_options()
 	if [[ $B_ALLOW_WEATHER == 'true' ]];then
 		print_lines_basic "2" "-w -W" "Location (uses -z/irc filter), weather observation time, wind chill, heat index, dew point (shows extra lines for data where relevant)."
 	fi
-	print_lines_basic "1" "-y" "Required extra option: integer, 80 or greater. Set the output line width max. Overrides IRC/Terminal settings or actual widths. If used with -h, put -y option first. Example:^inxi^-y^130"
+	print_lines_basic "1" "-y" "Required extra option: integer, 80 or greater. Set the output line width max. Overrides IRC/Terminal settings or actual widths. If used with -h, put -y option first. Example:^$SELF_NAME^-y^130"
 	print_lines_basic "1" "-z" "Security filters for IP/Mac addresses, location, user home directory name. Default on for irc clients."
 	print_lines_basic "1" "-Z" "Absolute override for output filters. Useful for debugging networking issues in irc for example."
 	print_screen_output " "
@@ -3635,7 +3638,8 @@ show_options()
 	print_lines_basic "4" "-H" "This help menu, plus developer options. Do not use dev options in normal operation!"
 	print_lines_basic "4" "--recommends" "Checks $SELF_NAME application dependencies + recommends, and directories, then shows what package(s) you need to install to add support for that feature. "
 	if [[ $B_ALLOW_UPDATE == 'true' ]];then
-		print_lines_basic "4" "-U" "Auto-update script. Will also install/update man page. Note: if you installed as root, you must be root to update, otherwise user is fine. Man page installs require root user mode."
+		#print_lines_basic "4" "-U" "Auto-update script. Will also install/update man page. Note: if you installed as root, you must be root to update, otherwise user is fine. Man page installs require root user mode."
+		print_lines_basic "4" "-U" "Auto-update $SELF_NAME from inxi-legacy branch server.  Note: if you installed as root, you must be root to update, otherwise user is fine. No man page install supported for legacy branch."
 	fi
 	print_lines_basic "4" "-V --version" "$SELF_NAME version information. Prints information then exits."
 	print_screen_output " "
@@ -3646,8 +3650,8 @@ show_options()
 	print_lines_basic "2" "8" "Basic logging"
 	print_lines_basic "2" "9" "Full file/sys info logging"
 	print_lines_basic "2" "10" "Color logging."
-	print_lines_basic "1" "" "The following create a tar.gz file of system data, plus collecting the inxi output to file. To automatically upload debugger data tar.gz file to ftp.techpatterns.com: inxi^-xx@^<11-14>"
-	print_lines_basic "1" "" "For alternate ftp upload locations: Example:^inxi^-!^ftp.yourserver.com/incoming^-xx@^14"
+	print_lines_basic "1" "" "The following create a tar.gz file of system data, plus collecting the $SELF_NAME output to file. To automatically upload debugger data tar.gz file to ftp.techpatterns.com: $SELF_NAME^-xx@^<11-14>"
+	print_lines_basic "1" "" "For alternate ftp upload locations: Example:^$SELF_NAME^-!^ftp.yourserver.com/incoming^-xx@^14"
 	print_lines_basic "2" "11" "With data file of tree traverse read of /sys."
 	print_lines_basic "2" "12" "With xorg conf and log data, xrandr, xprop, xdpyinfo, glxinfo etc."
 	print_lines_basic "2" "13" "With data from dev, disks, ${partition_string}s, etc., plus /sys tree traverse data file."
@@ -3672,14 +3676,14 @@ show_options()
 		print_lines_basic "1" "-! 3" "Sets flags B_TESTING_1='true' and B_TESTING_2='true'."
 		if [[ $B_ALLOW_UPDATE == 'true' ]];then
 			print_lines_basic "1" "-! 10" "Triggers an update from the primary dev download server instead of source server."
-			print_lines_basic "1" "-! 11" "Triggers an update from source branch one - if present, of course."
-			print_lines_basic "1" "-! 12" "Triggers an update from source branch two - if present, of course."
-			print_lines_basic "1" "-! 13" "Triggers an update from source branch three - if present, of course."
+# 			print_lines_basic "1" "-! 11" "Triggers an update from source branch one - if present, of course."
+# 			print_lines_basic "1" "-! 12" "Triggers an update from source branch two - if present, of course."
+# 			print_lines_basic "1" "-! 13" "Triggers an update from source branch three - if present, of course."
 			print_lines_basic "1" "-! " "<http://......> Triggers an update from whatever server you list."
-			print_lines_basic "1" "" "Example: inxi^-!^http://yourserver.com/testing/inxi"
+			print_lines_basic "1" "" "Example: $SELF_NAME^-!^http://yourserver.com/testing/$SELF_NAME"
 		fi
 		print_lines_basic "1" "-! " "<ftp.......> Changes debugging data ftp upload location to whatever you enter here. Only used together with -xx@^11-14, and must be used in front of that."
-		print_lines_basic "1" "" "Example: inxi^-!^ftp.yourserver.com/incoming^-xx@^14"
+		print_lines_basic "1" "" "Example: $SELF_NAME^-!^ftp.yourserver.com/incoming^-xx@^14"
 	fi
 	print_screen_output " "
 }
