@@ -12,7 +12,7 @@ someone wants to work with the legacy inxi Gawk/Bash code themselves.
 If you want to run binxi, or clone this branch:
 
 To run binxi:
-wget -O /usr/local/bin/binxi https://github.com/smxi/inxi/raw/inxi-perl/binxi
+wget -O /usr/local/bin/binxi https://github.com/smxi/inxi/raw/inxi-legacy/binxi
 
 To clone this branch:
 git clone https://github.com/smxi/inxi --branch inxi-legacy --single-branch
