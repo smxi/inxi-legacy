@@ -3,8 +3,8 @@
 SELF_NAME='binxi' 
 # don't quote the following, parsers grab these too
 SELF_VERSION=2.3.56
-SELF_DATE=2018-03-15
-SELF_PATCH=001-b
+SELF_DATE=2018-03-16
+SELF_PATCH=002-b
 ########################################################################
 ####  SPECIAL THANKS
 ########################################################################
@@ -494,7 +494,7 @@ SELF_DATA_DIR=''
 LOG_FILE='binxi.log'
 LOG_FILE_1='binxi.1.log'
 LOG_FILE_2='binxi.2.log'
-MAN_FILE_DOWNLOAD='https://github.com/smxi/inxi/raw/master/inxi.1.gz'
+MAN_FILE_DOWNLOAD='https://github.com/smxi/inxi/raw/inxi-legacy/binxi.1.gz'
 SELF_PATH='' # filled-in in Main
 #SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/master/'
 SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/inxi-legacy/'
@@ -3297,6 +3297,7 @@ get_parameters()
 				;;
 			U)	if [[ $B_ALLOW_UPDATE == 'true' ]];then
 					#self_updater "$SELF_DOWNLOAD" 'source server' "$opt"
+					B_MAN='false'
 					self_updater "$SELF_DOWNLOAD" 'legacy branch server' "$opt"
 				else
 					error_handler 17 "-$opt"
