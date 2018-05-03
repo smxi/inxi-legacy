@@ -2,6 +2,8 @@
 README for GetSystemData Perl XS Module
 ====================================================================
 
+git clone https://github.com/smxi/inxi --branch inxi-c --single-branch
+
 There are 2 directories which must be known a priori to compiling:
 
 1. Location of X header files (Xlib.h, Xatom.h) - defaults to
