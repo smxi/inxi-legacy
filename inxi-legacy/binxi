@@ -4,7 +4,7 @@ SELF_NAME='binxi'
 # don't quote the following, parsers grab these too
 SELF_VERSION=2.3.56
 SELF_DATE=2018-03-22
-SELF_PATCH=003-b
+SELF_PATCH=004-b
 ########################################################################
 ####  SPECIAL THANKS
 ########################################################################
@@ -498,11 +498,11 @@ MAN_FILE_DOWNLOAD='https://smxi.org/in/binxi.1.gz'
 #MAN_FILE_DOWNLOAD='https://github.com/smxi/inxi/raw/inxi-legacy/binxi.1.gz'
 SELF_PATH='' # filled-in in Main
 #SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/master/'
-SELF_DOWNLOAD='https://github.com/smxi/inxi/raw/inxi-legacy/'
-SELF_DOWNLOAD_BRANCH_1='https://github.com/smxi/inxi/raw/one/'
-SELF_DOWNLOAD_BRANCH_2='https://github.com/smxi/inxi/raw/two/'
-SELF_DOWNLOAD_BRANCH_3='https://github.com/smxi/inxi/raw/three/'
-SELF_DOWNLOAD_DEV='https://smxi.org/test/'
+SELF_DOWNLOAD='https://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/'
+SELF_DOWNLOAD_BRANCH_1='https://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/'
+SELF_DOWNLOAD_BRANCH_2='hhttps://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/'
+SELF_DOWNLOAD_BRANCH_3='https://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/'
+SELF_DOWNLOAD_DEV='https://smxi.org/in/'
 # note, you can use any ip url here as long as it's the only line on the output page.
 # Also the ip address must be the last thing on that line. If you abuse this ip tool 
 # you will be banned from further access. Most > 24x daily automated queries to it are abuse.

@@ -1,21 +1,25 @@
-README for inxi - a command line system information tool
+README for binxi - a command line system information tool
 
-NOTE: This is the LEGACY branch of inxi. So that you can run it
-together with inxi, this version has been renamed to binxi (Bash
-inxi) If you want the current Perl version, which is the only 
-version which is maintained, go to the master branch.
+NOTE: This is the LEGACY version of inxi. So that you can run it together with 
+inxi, this version has been renamed to binxi (Bash inxi) If you want the current 
+Perl version, which is the only version which is maintained, go to the master 
+branch.
 
-This branch is here only for legacy historical purposes, or in case 
-someone wants to work with the legacy inxi Gawk/Bash code themselves.
+This repo is here only for legacy historical purposes, or in case someone wants 
+to work with the legacy inxi Gawk/Bash code themselves.
 
 =====================================================================
-If you want to run binxi, or clone this branch:
+If you want to run binxi, or clone this repo:
 
 To run binxi:
-wget -O /usr/local/bin/binxi https://github.com/smxi/inxi/raw/inxi-legacy/binxi
+wget -O /usr/local/bin/binxi https://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/binxi
 
-To clone this branch:
-git clone https://github.com/smxi/inxi --branch inxi-legacy --single-branch
+Shortcut, easy to remember:
+
+wget -O /usr/local/bin/binxi smxi.org/binxi
+
+To clone binxi (legacy inxi):
+git clone https://codeberg.org/smxi/inxi-legacy/inxi-legacy/binxi
 
 =====================================================================
 SUPPORT INFO:
@@ -29,27 +33,25 @@ The one page wiki on github is only a pointer to the real resources.
 LEGACY HTML MAN PAGE: http://smxi.org/docs/inxi-man-2.x.htm 
 LEGACY MENU OPTIONS: http://smxi.org/docs/inxi-options-2.x.htm 
 
-ISSUES: https://github.com/smxi/inxi/issues
+ISSUES: https://codeberg.org/smxi/inxi-legacy/issues
 No issues accepted for non current inxi master branch releases.
 
 SUPPORT FORUMS: http://techpatterns.com/forums/forum-33.html
 This is the best place to place support issues that may be complicated.
+NO SUPPORT FOR inxi legacy/binxi!
 
 If you are developer, use:
 DEVELOPER FORUMS: http://techpatterns.com/forums/forum-32.html
 
-SOURCE VERSION CONTROL: https://github.com/smxi/inxi
-MAIN BRANCH: master
-DEVELOPMENT BRANCHES: inxi-perl, one, two, three.
-ALTERNATE BRANCHES: inxi-legacy (this one), master-plain (without gz files)
+SOURCE VERSION CONTROL: https://codeberg.org/inxi-legacy
 
-PULL REQUESTS: None for this branch unless you did a really good job and 
-it won't cost me time to integrate and test it.
+PULL REQUESTS: None for this repo unless you did a really good job and it won't 
+cost me time to integrate and test it.
 
-inxi has one and only one release, and that is the current one (plus dev releases,
-of course, but those should never be packaged). All previous releases are 
-immediately obsolete on the commit of every new release. There is no exception to 
-this, and never will be.
+inxi has one and only one release, and that is the current one (plus dev 
+releases, of course, but those should never be packaged). All previous releases 
+are immediately obsolete on the commit of every new release. There is no 
+exception to this, and never will be.
 
 =====================================================================
 ABOUT INXI - CORE COMMITMENT TO LONG TERM STABILITY
