@@ -2,7 +2,7 @@
 README for GetSystemData Perl XS Module
 ====================================================================
 
-git clone https://github.com/smxi/inxi --branch inxi-c --single-branch
+git clone https://codeberg.org/smxi/inxi-legacy
 
 There are 2 directories which must be known a priori to compiling:
 
