@@ -31,14 +31,14 @@ in Copilot.
 If you want to run binxi, or clone this repo:
 
 To run binxi:
-wget -O /usr/local/bin/binxi https://codeberg.org/smxi/inxi-legacy/raw/branch/master/inxi-legacy/binxi
+wget -O /usr/local/bin/binxi https://codeberg.org/smxi/inxi-legacy/raw/branch/master/binxi
 
 Shortcut, easy to remember:
 
 wget -O /usr/local/bin/binxi smxi.org/binxi
 
 To clone binxi (legacy inxi):
-git clone https://codeberg.org/smxi/inxi-legacy/inxi-legacy/binxi
+git clone https://codeberg.org/smxi/inxi-legacy/binxi
 
 =====================================================================
 SUPPORT INFO:
